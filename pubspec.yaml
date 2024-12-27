@@ -1,0 +1,33 @@
+name: my_trainings_app
+description: "A new Flutter project."
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.1 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  carousel_slider: ^5.0.0
+  cloud_firestore: ^5.6.0
+  cupertino_icons: ^1.0.6
+  firebase_core: ^3.9.0
+  get: ^4.6.5
+  http: ^1.2.2
+  lottie: ^2.0.0
+  intl: ^0.17.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^3.0.0
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/
