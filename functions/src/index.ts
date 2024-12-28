@@ -19,10 +19,16 @@ type TrainingDocument = {
   trainer?: {name?: string};
 };
 
-// Fetch data from Firestore
+// Fetch trainings data from Firestore
 export const fetchTrainingsData = https.onRequest(async (req, res) => {
   try {
-    const {location, title, trainerName} = req.body;
+    // Parse the incoming request body
+    const decodedArgs = typeof req.body === "string" ?
+      JSON.parse(req.body) : req.body;
+    // Access the data
+    const location = decodedArgs.location || [];
+    const title = decodedArgs.title || [];
+    const trainerName = decodedArgs.trainerName || [];
 
     // Fetch all documents
     const snapshot = await db.collection("trainings").get();
@@ -37,18 +43,35 @@ export const fetchTrainingsData = https.onRequest(async (req, res) => {
           docData.toTime.toDate().toISOString() : null,
       };
     });
+    // Check if any filter criteria are provided
+    const hasFilters = location.length > 0 ||
+      title.length > 0 || trainerName.length > 0;
+
+    if (!hasFilters) {
+      // If no filters are present, return all documents
+      res.status(200).json({data});
+      return;
+    }
+
     // Filter the data in the cloud function
     const filteredData = data.filter((doc) => {
-      const locationMatch = !location || location.some((loc: string) =>
-        doc.location?.toLowerCase().includes(loc.toLowerCase()));
-      const titleMatch = !title || title.some((t: string) =>
-        doc.title?.toLowerCase().includes(t.toLowerCase()));
-      const trainerMatch = !trainerName || trainerName.some((tn: string) =>
-        doc.trainer?.name?.toLowerCase().includes(tn.toLowerCase()));
+      const locationMatch = location.length === 0 ||
+        location.some((loc: string) =>
+          doc.location?.toLowerCase().includes(loc.toLowerCase())
+        );
+      const titleMatch = title.length === 0 ||
+        title.some((t: string) =>
+          doc.title?.toLowerCase().includes(t.toLowerCase())
+        );
+      const trainerMatch = trainerName.length === 0 ||
+        trainerName.some((tn: string) =>
+          doc.trainer?.name?.toLowerCase().includes(tn.toLowerCase())
+        );
 
       return locationMatch && titleMatch && trainerMatch;
     });
-    // Send data as response
+
+    // Send filtered data as response
     res.status(200).json({data: filteredData});
   } catch (error) {
     console.error("Error fetching data:", error);

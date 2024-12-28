@@ -1,13 +1,93 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:my_trainings_app/controllers/filter_controller.dart';
 
+import '../controllers/trainings_controller.dart';
+import '../models/training_model.dart';
 import '../utils/constants.dart';
 import '../utils/themes.dart';
+import 'package:http/http.dart' as http;
+
+import 'filter_service.dart';
 
 class TrainingsService {
+  final TrainingsController _trainingController =
+      Get.put(TrainingsController());
+  final FilterController _filterController = Get.put(FilterController());
 
-  void openOrderDialog(DateTime fromTime, DateTime toTime) {
+  ///Function to fetch all trainings data from the API
+  void fetchTrainingsData({
+    List<String>? title,
+    List<String>? location,
+    List<String>? trainerName,
+  }) async {
+    _trainingController.loading.value = true;
+    const url =
+        "https://us-central1-my-trainings-app-1409.cloudfunctions.net/fetchTrainingsData";
+
+    final payload = {
+      "title": title ?? [],
+      "location": location ?? [],
+      "trainerName": trainerName ?? [],
+    };
+    try {
+      // Make the HTTP POST request
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode(payload),
+      );
+
+      // Check if the request was successful
+      if (response.statusCode == 200) {
+        // If the request is successful, parse the JSON data
+        final List<dynamic> responseData = json.decode(response.body)['data'];
+        final List<TrainingModel> fetchedTrainings = [];
+
+        for (final map in responseData) {
+          try {
+            fetchedTrainings.add(TrainingModel.fromMap(map));
+          } catch (error) {
+            log('Error parsing fetchTrainingsData: $error');
+          }
+        }
+
+        // Update the trainingsList with the fetched data.
+        _trainingController.trainingsList.value = fetchedTrainings;
+
+        // On initial data fetch, create list of titles, locations and trainer
+        // names for filter
+        if (_filterController.titles.value.isEmpty ||
+            _filterController.trainers.value.isEmpty ||
+            _filterController.locations.value.isEmpty) {
+          _filterController.titles.value =
+              FilterService.getTitles(_trainingController);
+          _filterController.trainers.value =
+              FilterService.getTrainers(_trainingController);
+          _filterController.locations.value =
+              FilterService.getLocations(_trainingController);
+        }
+      } else {
+        // If the server didn't return a 200 OK response, throw an error
+        _trainingController.noTrainingFound.value = true;
+        log('Failed to load fetchTrainingsData. '
+            'Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      _trainingController.noTrainingFound.value = true;
+      log('Error fetching fetchTrainingsData: $error');
+    }
+    _trainingController.loading.value = false;
+  }
+
+  ///Alert popUp when user enrolls into a training
+  void openEnrolDialog(DateTime fromTime, DateTime toTime) {
     Get.defaultDialog(
       titlePadding: const EdgeInsets.only(top: 10),
       title: Constants.enrolledLabel,

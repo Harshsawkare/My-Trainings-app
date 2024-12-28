@@ -28,8 +28,17 @@ class Constants {
   static const String trainingNameLabel = 'Training name';
   static const String trainerLabel = 'Trainer';
   static const String noTrainingsAvailableLabel = 'No trainings available';
+  static const String comingSoonLabel = 'Coming soon';
+  static const String applyLabel = 'Apply';
+  static const String clearLabel = 'Clear';
 
-  // Service's labels
+  // Toast message
+  static const String noNewtworkConnection = 'No network connection';
+
+  // Shared pref keys
+  static const String locationPrefList = 'locationPrefList';
+  static const String titlePrefList = 'titlePrefList';
+  static const String trainerPrefList = 'trainerPrefList';
 
   // Asset paths
   static const String logoPath = 'assets/logo.png';

@@ -1,5 +1,7 @@
 import 'package:my_trainings_app/models/trainer_model.dart';
 
+
+///Training model
 class TrainingModel {
   final String id;
   final String title;

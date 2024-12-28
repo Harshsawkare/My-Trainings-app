@@ -12,12 +12,16 @@ dependencies:
     sdk: flutter
   carousel_slider: ^5.0.0
   cloud_firestore: ^5.6.0
+  connectivity_plus: ^6.0.3
   cupertino_icons: ^1.0.6
   firebase_core: ^3.9.0
+  fluttertoast: ^8.0.9
   get: ^4.6.5
   http: ^1.2.2
   lottie: ^2.0.0
+  internet_connection_checker: ^0.0.1
   intl: ^0.17.0
+  shared_preferences: 2.3.3
 
 dev_dependencies:
   flutter_test:

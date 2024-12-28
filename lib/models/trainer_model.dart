@@ -1,3 +1,5 @@
+
+///Trainer model
 class TrainerModel {
   final String id;
   final String name;

@@ -211,11 +211,13 @@ class TrainingDetailsScaffold extends StatelessWidget {
           ],
         ),
       ),
+
+      //Enrol now button
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: ElevatedButton(
-          onPressed: () => TrainingsService().openOrderDialog(
+          onPressed: () => TrainingsService().openEnrolDialog(
             training.fromTime,
             training.toTime,
           ),

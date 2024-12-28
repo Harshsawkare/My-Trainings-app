@@ -191,7 +191,7 @@ class EnrollmentCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         ElevatedButton(
-                          onPressed: () => TrainingsService().openOrderDialog(
+                          onPressed: () => TrainingsService().openEnrolDialog(
                             training.fromTime,
                             training.toTime,
                           ),
