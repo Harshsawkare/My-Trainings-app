@@ -12,7 +12,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -27,9 +26,9 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: Themes.secondaryColor,
       body: Center(
         child: Image.asset(
-                Constants.logoPath,
-                width: 100,
-              ), // Display logo
+          Constants.logoPath,
+          width: 100,
+        ), // Display logo
       ),
     );
   }
