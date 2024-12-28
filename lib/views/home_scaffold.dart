@@ -168,7 +168,7 @@ class _HomeScaffoldState extends State<HomeScaffold> {
                                 Constants.noTrainingsAvailableLabel,
                                 style: TextStyle(
                                   color: Themes.primaryColor,
-                                  fontSize: 12,
+                                  fontSize: 14,
                                 ),
                               ),
                             ),
@@ -239,7 +239,7 @@ class _HomeScaffoldState extends State<HomeScaffold> {
                       Constants.noTrainingsAvailableLabel,
                       style: TextStyle(
                         color: Themes.primaryColor,
-                        fontSize: 12,
+                        fontSize: 14,
                       ),
                     ),
                   ),

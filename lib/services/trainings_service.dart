@@ -61,6 +61,12 @@ class TrainingsService {
         // Update the trainingsList with the fetched data.
         _trainingController.trainingsList.value = fetchedTrainings;
 
+        if (fetchedTrainings.isEmpty) {
+          _trainingController.noTrainingFound.value = true;
+        } else {
+          _trainingController.noTrainingFound.value = false;
+        }
+
         // On initial data fetch, create list of titles, locations and trainer
         // names for filter
         if (_filterController.titles.value.isEmpty ||

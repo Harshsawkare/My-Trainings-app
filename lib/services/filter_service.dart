@@ -39,6 +39,9 @@ class FilterService {
   void clearFilterPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+
+    //hit the API call to fetch all the trainging data
+    TrainingsService().fetchTrainingsData();
   }
 
   ///Get all the locations from the initial list of trainings
