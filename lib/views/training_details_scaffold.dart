@@ -4,7 +4,7 @@ import 'package:my_trainings_app/models/training_model.dart';
 import 'package:my_trainings_app/views/widgets/dashed_line.dart';
 
 import '../services/home_service.dart';
-import '../services/training_service.dart';
+import '../services/trainings_service.dart';
 import '../utils/constants.dart';
 import '../utils/themes.dart';
 
@@ -186,22 +186,27 @@ class TrainingDetailsScaffold extends StatelessWidget {
             ),
 
             //description
-            const Text(
-              '${Constants.heresWhyLabel}:',
-              style: TextStyle(
-                  fontSize: 14,
-                  color: Themes.primaryColor,
-                  fontWeight: FontWeight.bold),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 10, bottom: 100),
+            const Padding(
+              padding: EdgeInsets.only(bottom: 10),
               child: Text(
-                training.description,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Themes.primaryColor,
-                ),
+                '${Constants.heresWhyLabel}:',
+                style: TextStyle(
+                    fontSize: 14,
+                    color: Themes.primaryColor,
+                    fontWeight: FontWeight.bold),
               ),
+            ),
+
+            ...training.description.map((e) => Text(
+                  e,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Themes.primaryColor,
+                  ),
+                )),
+            const Padding(
+              padding: EdgeInsets.only(bottom: 100),
+              child: SizedBox.shrink(),
             ),
           ],
         ),
@@ -210,7 +215,7 @@ class TrainingDetailsScaffold extends StatelessWidget {
       floatingActionButton: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: ElevatedButton(
-          onPressed: () => TrainingService().openOrderDialog(
+          onPressed: () => TrainingsService().openOrderDialog(
             training.fromTime,
             training.toTime,
           ),

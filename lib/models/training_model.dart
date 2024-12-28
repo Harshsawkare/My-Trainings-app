@@ -9,7 +9,7 @@ class TrainingModel {
   final String amount;
   final DateTime fromTime;
   final DateTime toTime;
-  final String description;
+  final List description;
   final int enrollments;
   final TrainerModel trainer;
 

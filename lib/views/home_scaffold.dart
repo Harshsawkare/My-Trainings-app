@@ -1,12 +1,16 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_trainings_app/services/training_service.dart';
+import 'package:my_trainings_app/controllers/highlights_controller.dart';
+import 'package:my_trainings_app/models/training_model.dart';
+import 'package:my_trainings_app/services/trainings_service.dart';
 import 'package:my_trainings_app/utils/constants.dart';
 import 'package:my_trainings_app/utils/themes.dart';
 import 'package:my_trainings_app/views/widgets/enrollment_card.dart';
 import 'package:my_trainings_app/views/widgets/sort_and_filter_bottom_sheet.dart';
 import 'package:my_trainings_app/views/widgets/training_carousal_card.dart';
+
+import '../controllers/trainings_controller.dart';
 
 class HomeScaffold extends StatefulWidget {
   const HomeScaffold({super.key});
@@ -16,16 +20,18 @@ class HomeScaffold extends StatefulWidget {
 }
 
 class _HomeScaffoldState extends State<HomeScaffold> {
-  final List<Widget> items = [
-    TrainingCarousalCard(
-      training: Constants.trainingModel,
-    ),
-  ];
+  final TrainingsController _trainingsController =
+      Get.put(TrainingsController());
+  final HighlightsController _highlightsController =
+      Get.put(HighlightsController());
 
   @override
   void initState() {
     super.initState();
-    TrainingService().fetchTrainingsData();
+
+    // Initial fetch for trainings
+    _highlightsController.fetchHighlightsData();
+    _trainingsController.fetchTrainingsData();
   }
 
   @override
@@ -102,8 +108,39 @@ class _HomeScaffoldState extends State<HomeScaffold> {
                           ),
                         ),
 
-                        CarouselSlider(
-                            items: items,
+                        Obx(() {
+                          if (_highlightsController.highlightsList.isEmpty &&
+                              !_highlightsController.noHighlightsFound.value) {
+                            return SizedBox(
+                              height: Get.size.height * 0.2,
+                              width: Get.size.width,
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  color: Themes.primaryColor,
+                                  strokeWidth: 2,
+                                  strokeCap: StrokeCap.round,
+                                ),
+                              ),
+                            );
+                          }
+
+                          if (_highlightsController.noHighlightsFound.value) {
+                            return SizedBox(
+                              height: Get.size.height * 0.2,
+                              width: Get.size.width,
+                              child: const Center(
+                                child: Text(
+                                  Constants.noTrainingsAvailableLabel,
+                                  style: TextStyle(
+                                    color: Themes.primaryColor,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+
+                          return CarouselSlider.builder(
                             options: CarouselOptions(
                               height: Get.size.height * 0.2,
                               aspectRatio: 16 / 9,
@@ -119,7 +156,21 @@ class _HomeScaffoldState extends State<HomeScaffold> {
                               enlargeCenterPage: true,
                               enlargeFactor: 0.3,
                               scrollDirection: Axis.horizontal,
-                            ))
+                            ),
+                            itemCount:
+                                _highlightsController.highlightsList.length,
+                            itemBuilder: (
+                              BuildContext context,
+                              int index,
+                              int realIndex,
+                            ) {
+                              return TrainingCarousalCard(
+                                training:
+                                    _highlightsController.highlightsList[index],
+                              );
+                            },
+                          );
+                        }),
                       ],
                     ),
                   ],
@@ -127,19 +178,37 @@ class _HomeScaffoldState extends State<HomeScaffold> {
               ),
 
               // Training list view
-              Expanded(
-                child: SizedBox(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: const ClampingScrollPhysics(),
-                    padding: const EdgeInsets.all(15),
-                    itemCount: 5,
-                    itemBuilder: (context, index) {
-                      return EnrollmentCard(training: Constants.trainingModel);
-                    },
+              Obx(() {
+                if (_highlightsController.highlightsList.isEmpty) {
+                  return SizedBox(
+                    height: Get.size.height * 0.2,
+                    width: Get.size.width,
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        color: Themes.primaryColor,
+                        strokeWidth: 2,
+                        strokeCap: StrokeCap.round,
+                      ),
+                    ),
+                  );
+                }
+
+                return Expanded(
+                  child: SizedBox(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const ClampingScrollPhysics(),
+                      padding: const EdgeInsets.all(15),
+                      itemCount: _trainingsController.trainingsList.length,
+                      itemBuilder: (context, index) {
+                        return EnrollmentCard(
+                          training: _trainingsController.trainingsList[index],
+                        );
+                      },
+                    ),
                   ),
-                ),
-              )
+                );
+              }),
             ],
           ),
         ),

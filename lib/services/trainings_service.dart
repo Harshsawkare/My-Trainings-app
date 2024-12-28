@@ -1,43 +1,11 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-import 'package:my_trainings_app/models/trainer_model.dart';
-import 'package:my_trainings_app/models/training_model.dart';
 
 import '../utils/constants.dart';
 import '../utils/themes.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 
-class TrainingService {
-  void fetchTrainingsData() async {
-    const String url =
-        'https://us-central1-my-trainings-app-1409.cloudfunctions.net/fetchTrainingsData';
-
-    try {
-      // Make the HTTP GET request
-      final response = await http.get(Uri.parse(url));
-
-      // Check if the request was successful
-      if (response.statusCode == 200) {
-        // If the request is successful, parse the JSON data
-        final data = json.decode(response.body)['data'];
-        var trainings = <TrainingModel>[];
-        for (final map in data) {
-          trainings.add(TrainingModel.fromMap(map));
-        }
-        log(trainings.toString());
-      } else {
-        // If the server didn't return a 200 OK response, throw an error
-        log('Failed to load data. Status code: ${response.statusCode}');
-      }
-    } catch (error) {
-      // Handle errors (e.g., no internet, timeout)
-      log('Error fetching data: $error');
-    }
-  }
+class TrainingsService {
 
   void openOrderDialog(DateTime fromTime, DateTime toTime) {
     Get.defaultDialog(
